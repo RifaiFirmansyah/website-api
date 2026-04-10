@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://rifaifirmansyah.github.io/my-quran",
+  "homepage": "https://RifaiFirmansyah.github.io/my-quran",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
