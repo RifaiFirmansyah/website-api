@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { FaArrowUp, FaPlay, FaPause } from "react-icons/fa";
+import {
+  FaArrowUp,
+  FaPlay,
+  FaPause,
+  FaChevronDown,
+  FaChevronUp,
+} from "react-icons/fa";
 import "./App.css";
 
 function App() {
@@ -12,7 +18,11 @@ function App() {
   const [currentAudio, setCurrentAudio] = useState(null);
   const [playingAyat, setPlayingAyat] = useState(null);
   const [showDeskripsi, setShowDeskripsi] = useState(false);
-  const [openAyat, setOpenAyat] = useState(null); // 🔥 NEW
+  const [openAyat, setOpenAyat] = useState(null);
+
+  // 🔥 NEW
+  const [tafsir, setTafsir] = useState([]);
+  const [openTafsir, setOpenTafsir] = useState(null);
 
   useEffect(() => {
     fetch("https://equran.id/api/v2/surat")
@@ -32,6 +42,14 @@ function App() {
         setPlayingAyat(null);
         setShowDeskripsi(false);
         setOpenAyat(null);
+        setOpenTafsir(null);
+      });
+
+    // 🔥 FETCH TAFSIR
+    fetch(`https://equran.id/api/v2/tafsir/${nomor}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setTafsir(data.data.tafsir);
       });
   };
 
@@ -43,7 +61,6 @@ function App() {
     }
   };
 
-  // 🎧 AYAT
   const handlePlayAyat = (ayat) => {
     const url = ayat.audio?.[qari] || ayat.audio;
     if (!url) return;
@@ -61,11 +78,9 @@ function App() {
     setPlayingAyat(ayat.nomorAyat);
 
     audio.play();
-
     audio.onended = () => setPlayingAyat(null);
   };
 
-  // 🎧 SURAT
   const handlePlaySurat = () => {
     const url = detailSurat?.audioFull?.[qari];
     if (!url) return;
@@ -83,8 +98,11 @@ function App() {
     setPlayingAyat("full");
 
     audio.play();
-
     audio.onended = () => setPlayingAyat(null);
+  };
+
+  const toggleTafsir = (nomorAyat) => {
+    setOpenTafsir(openTafsir === nomorAyat ? null : nomorAyat);
   };
 
   const filteredSurat = surat.filter((item) =>
@@ -95,12 +113,12 @@ function App() {
     <>
       {/* NAVBAR */}
       <nav className="navbar navbar-dark px-4 navbar-custom d-flex justify-content-between">
-        <span className="navbar-brand mb-0 h1">📖 Quran App</span>
+        <span className="navbar-brand mb-0 h4">📖 Quran App</span>
 
         <input
           type="text"
-          placeholder="🔍 Cari surat..."
-          className="form-control w-25 rounded-pill"
+          placeholder="Cari surat..."
+          className="form-control w-25 rounded-pill shadow-sm"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -109,7 +127,7 @@ function App() {
       <div className="container-fluid">
         <div className="row">
           {/* SIDEBAR */}
-          <div className="col-md-3 bg-light vh-100 overflow-auto p-3">
+          <div className="col-md-3 bg-white vh-100 overflow-auto p-3 shadow-sm">
             <h5>Daftar Surat</h5>
 
             {filteredSurat.map((item) => (
@@ -129,7 +147,7 @@ function App() {
           </div>
 
           {/* CONTENT */}
-          <div className="col-md-9 p-4">
+          <div className="col-md-9 p-4 content-area">
             {!detailSurat ? (
               <h3>Pilih surat</h3>
             ) : (
@@ -144,9 +162,7 @@ function App() {
                 <p>
                   <b>Jumlah Ayat:</b> {detailSurat.jumlahAyat}
                 </p>
-                <p></p>
 
-                {/* QARI */}
                 <select
                   className="form-select w-25 mb-3"
                   value={qari}
@@ -158,11 +174,10 @@ function App() {
                   <option value="05">Default</option>
                 </select>
 
-                {/* AUDIO SURAT */}
                 <button
-                  className={`btn ${
-                    playingAyat === "full" ? "btn-warning" : "btn-success"
-                  } mb-2`}
+                  className={`btn audio-btn mb-2 ${
+                    playingAyat === "full" ? "playing" : "stopped"
+                  }`}
                   onClick={handlePlaySurat}
                 >
                   {playingAyat === "full" ? <FaPause /> : <FaPlay />} Audio
@@ -170,19 +185,19 @@ function App() {
                 </button>
 
                 <button
-                  className="btn btn-danger mb-2 ms-2"
+                  className="btn btn-danger mb-2 ms-2 btn-stop"
                   onClick={stopAudio}
                 >
                   Stop
                 </button>
 
-                {/* DESKRIPSI */}
-                <button
-                  className="btn btn-info mb-3 float-end"
+                <div
+                  className="mb-3 float-end"
+                  style={{ cursor: "pointer", fontSize: "20px" }}
                   onClick={() => setShowDeskripsi(!showDeskripsi)}
                 >
-                  {showDeskripsi ? "Sembunyikan" : "Lihat"} Deskripsi
-                </button>
+                  {showDeskripsi ? <FaChevronUp /> : <FaChevronDown />}
+                </div>
 
                 {showDeskripsi && (
                   <div
@@ -197,13 +212,10 @@ function App() {
 
                 {/* AYAT */}
                 {detailSurat.ayat.map((ayat) => (
-                  <div key={ayat.nomorAyat} className="mb-4 p-3 border rounded">
-                    {/* 🔥 KLIK TEKS ARAB */}
+                  <div key={ayat.nomorAyat} className="mb-4 ayat-card">
                     <h3
-                      style={{
-                        textAlign: "right",
-                        cursor: "pointer",
-                      }}
+                      className="arab-text"
+                      style={{ cursor: "pointer" }}
                       onClick={() =>
                         setOpenAyat(
                           openAyat === ayat.nomorAyat ? null : ayat.nomorAyat,
@@ -213,32 +225,47 @@ function App() {
                       {ayat.teksArab}
                     </h3>
 
-                    {/* 🔥 LATIN + ARTI (HIDDEN) */}
                     {openAyat === ayat.nomorAyat && (
                       <>
-                        <p>{ayat.teksLatin}</p>
+                        <p className="text-muted">{ayat.teksLatin}</p>
                         <p>
                           <i>{ayat.teksIndonesia}</i>
                         </p>
                       </>
                     )}
 
-                    {/* AUDIO */}
-                    <button
-                      className={`btn btn-sm ${
-                        playingAyat === ayat.nomorAyat
-                          ? "btn-warning"
-                          : "btn-primary"
-                      }`}
-                      onClick={() => handlePlayAyat(ayat)}
-                    >
-                      {playingAyat === ayat.nomorAyat ? (
-                        <FaPause />
-                      ) : (
-                        <FaPlay />
-                      )}{" "}
-                      Ayat {ayat.nomorAyat}
-                    </button>
+                    <div className="mt-2 d-flex gap-2">
+                      <button
+                        className={`btn btn-sm btn-modern ${
+                          playingAyat === ayat.nomorAyat
+                            ? "btn-warning"
+                            : "btn-primary"
+                        }`}
+                        onClick={() => handlePlayAyat(ayat)}
+                      >
+                        {playingAyat === ayat.nomorAyat ? (
+                          <FaPause />
+                        ) : (
+                          <FaPlay />
+                        )}
+                      </button>
+
+                      <button
+                        className="btn btn-sm btn-modern btn-secondary"
+                        onClick={() => toggleTafsir(ayat.nomorAyat)}
+                      >
+                        📖 Tafsir
+                      </button>
+                    </div>
+
+                    {openTafsir === ayat.nomorAyat && (
+                      <div className="tafsir-box">
+                        <b>Tafsir:</b>
+                        <p className="mt-2">
+                          {tafsir[ayat.nomorAyat - 1]?.teks || "Memuat..."}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 ))}
               </>

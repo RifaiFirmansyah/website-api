@@ -1,5 +1,6 @@
 .navbar-custom {
   background-color: #0d9488;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-item {
@@ -9,12 +10,91 @@
   margin-bottom: 5px;
   transition: all 0.3s ease;
   color: black;
-  background-color: transparent;
+  background-color: #82a9a4;
 }
 
 .sidebar-item.active {
   background-color: #0d9488;
+  color: black;
+  font-weight: bold;
+}
+
+.sidebar-item:hover {
+  background: #e0e7ff;
+}
+
+/* BACKGROUND */
+body {
+  background: #82a9a4;
+  font-family: "Poppins", sans-serif;
+}
+
+.content-area {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+.audio-btn {
+  border: none;
   color: white;
+  border-radius: 10px;
+  padding: 8px 16px;
+}
+
+/* kondisi play */
+.audio-btn.playing {
+  background: #f59e0b; /* kuning modern */
+}
+
+/* kondisi stop */
+.audio-btn.stopped {
+  background: #10b981; /* hijau modern */
+}
+
+.btn-stop {
+  background-color: #ef4444;
+  border: none;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* CARD AYAT */
+.ayat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  transition: 0.3s ease;
+}
+
+.ayat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* TEKS ARAB */
+.arab-text {
+  font-size: 28px;
+  line-height: 2;
+  text-align: right;
+}
+
+/* BUTTON */
+.btn-modern {
+  border-radius: 10px !important;
+  padding: 6px 14px !important;
+}
+
+/* TAFSIR BOX */
+.tafsir-box {
+  background: #eef2ff;
+  border-left: 4px solid #4f46e5;
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 10px;
 }
 
 .back-to-top {
