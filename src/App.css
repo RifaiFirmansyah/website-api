@@ -23,6 +23,28 @@
   background: #e0e7ff;
 }
 
+/* SIDEBAR MOBILE */
+.sidebar-mobile {
+  transition: all 0.3s ease;
+}
+
+/* MOBILE MODE */
+@media (max-width: 768px) {
+  .sidebar-mobile {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 75%;
+    height: 100%;
+    z-index: 999;
+    background: white;
+  }
+
+  .sidebar-mobile.show {
+    left: 0;
+  }
+}
+
 /* BACKGROUND */
 body {
   background: #82a9a4;

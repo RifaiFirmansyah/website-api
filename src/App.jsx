@@ -14,12 +14,12 @@ function App() {
   const [active, setActive] = useState(null);
   const [search, setSearch] = useState("");
   const [qari, setQari] = useState("01");
-
+  const [showSidebar, setShowSidebar] = useState(false);
   const [currentAudio, setCurrentAudio] = useState(null);
   const [playingAyat, setPlayingAyat] = useState(null);
   const [showDeskripsi, setShowDeskripsi] = useState(false);
   const [openAyat, setOpenAyat] = useState(null);
-
+  const [showSearch, setShowSearch] = useState(false);
   // 🔥 NEW
   const [tafsir, setTafsir] = useState([]);
   const [openTafsir, setOpenTafsir] = useState(null);
@@ -111,23 +111,47 @@ function App() {
 
   return (
     <>
-      {/* NAVBAR */}
-      <nav className="navbar navbar-dark px-4 navbar-custom d-flex justify-content-between">
-        <span className="navbar-brand mb-0 h4">📖 Quran App</span>
+      <nav className="navbar navbar-dark navbar-custom px-3 position-relative">
+        {/* KIRI: BUTTON SIDEBAR */}
+        <button
+          className="btn btn-light position-absolute start-0 ms-3"
+          onClick={() => setShowSidebar(!showSidebar)}
+        >
+          ☰
+        </button>
 
-        <input
-          type="text"
-          placeholder="Cari surat..."
-          className="form-control w-25 rounded-pill shadow-sm"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        {/* TENGAH: TITLE */}
+        <span className="navbar-brand mx-auto fw-bold">📖 Quran App</span>
+
+        {/* KANAN: SEARCH ICON */}
+        <button
+          className="btn btn-light position-absolute end-0 me-3"
+          onClick={() => setShowSearch(!showSearch)}
+        >
+          🔍
+        </button>
       </nav>
+
+      {showSearch && (
+        <div className="px-3 py-2 bg-light shadow-sm">
+          <input
+            type="text"
+            placeholder="Cari surat..."
+            className="form-control rounded-pill"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+      )}
 
       <div className="container-fluid">
         <div className="row">
           {/* SIDEBAR */}
-          <div className="col-md-3 bg-white vh-100 overflow-auto p-3 shadow-sm">
+          <div
+            className={`sidebar-mobile ${
+              showSidebar ? "show" : ""
+            } col-md-3 bg-white vh-100 overflow-auto p-3 shadow-sm`}
+          >
             <h5>Daftar Surat</h5>
 
             {filteredSurat.map((item) => (
@@ -139,6 +163,7 @@ function App() {
                 onClick={() => {
                   getDetailSurat(item.nomor);
                   setActive(item.nomor);
+                  setShowSidebar(false);
                 }}
               >
                 {item.nomor}. {item.namaLatin}
