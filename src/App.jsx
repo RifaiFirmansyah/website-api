@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Link,
-  useParams,
-} from "react-router-dom";
+import { HashRouter, Routes, Route, Link, useParams } from "react-router-dom";
 import {
   FaArrowUp,
   FaPlay,
@@ -18,12 +12,12 @@ import "./App.css";
 /* ================= WRAPPER ROUTER ================= */
 function AppWrapper() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<QuranApp />} />
         <Route path="/surat/:nomor" element={<QuranApp />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
