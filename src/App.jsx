@@ -23,6 +23,7 @@ function AppWrapper() {
 
 /* ================= MAIN APP ================= */
 function QuranApp() {
+  console.log("QuranApp jalan");
   const { nomor } = useParams();
 
   const [surat, setSurat] = useState([]);
