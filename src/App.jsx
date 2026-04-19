@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
 import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Link,
+  useParams,
+} from "react-router-dom";
+import {
   FaArrowUp,
   FaPlay,
   FaPause,
@@ -8,7 +15,22 @@ import {
 } from "react-icons/fa";
 import "./App.css";
 
-function App() {
+/* ================= WRAPPER ROUTER ================= */
+function AppWrapper() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<QuranApp />} />
+        <Route path="/surat/:nomor" element={<QuranApp />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+/* ================= MAIN APP ================= */
+function QuranApp() {
+  const { nomor } = useParams();
+
   const [surat, setSurat] = useState([]);
   const [detailSurat, setDetailSurat] = useState(null);
   const [active, setActive] = useState(null);
@@ -20,18 +42,22 @@ function App() {
   const [showDeskripsi, setShowDeskripsi] = useState(false);
   const [openAyat, setOpenAyat] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
-  // 🔥 NEW
   const [tafsir, setTafsir] = useState([]);
   const [openTafsir, setOpenTafsir] = useState(null);
 
+  /* LOAD LIST SURAT */
   useEffect(() => {
     fetch("https://equran.id/api/v2/surat")
       .then((res) => res.json())
       .then((data) => setSurat(data.data));
-
-    getDetailSurat(1);
-    setActive(1);
   }, []);
+
+  /* LOAD DETAIL BERDASARKAN URL */
+  useEffect(() => {
+    const nomorSurat = nomor || 1;
+    getDetailSurat(nomorSurat);
+    setActive(Number(nomorSurat));
+  }, [nomor]);
 
   const getDetailSurat = (nomor) => {
     fetch(`https://equran.id/api/v2/surat/${nomor}`)
@@ -45,7 +71,6 @@ function App() {
         setOpenTafsir(null);
       });
 
-    // 🔥 FETCH TAFSIR
     fetch(`https://equran.id/api/v2/tafsir/${nomor}`)
       .then((res) => res.json())
       .then((data) => {
@@ -111,19 +136,17 @@ function App() {
 
   return (
     <>
+      {/* NAVBAR */}
       <nav className="navbar navbar-dark navbar-custom px-3 position-relative">
-        {/* KIRI: BUTTON SIDEBAR */}
         <button
-          className="btn btn-light position-absolute start-0 ms-3"
+          className="btn btn-light position-absolute start-0 ms-3 d-md-none"
           onClick={() => setShowSidebar(!showSidebar)}
         >
           ☰
         </button>
 
-        {/* TENGAH: TITLE */}
         <span className="navbar-brand mx-auto fw-bold">📖 Quran App</span>
 
-        {/* KANAN: SEARCH ICON */}
         <button
           className="btn btn-light position-absolute end-0 me-3"
           onClick={() => setShowSearch(!showSearch)}
@@ -132,6 +155,7 @@ function App() {
         </button>
       </nav>
 
+      {/* SEARCH */}
       {showSearch && (
         <div className="px-3 py-2 bg-light shadow-sm">
           <input
@@ -146,7 +170,7 @@ function App() {
 
       <div className="container-fluid">
         <div className="row">
-          {/* SIDEBAR */}
+          {/* SIDEBAR (PAKAI LINK) */}
           <div
             className={`sidebar-mobile ${
               showSidebar ? "show" : ""
@@ -155,26 +179,23 @@ function App() {
             <h5>Daftar Surat</h5>
 
             {filteredSurat.map((item) => (
-              <div
+              <Link
                 key={item.nomor}
+                to={`/surat/${item.nomor}`}
                 className={`sidebar-item border-bottom ${
                   active === item.nomor ? "active" : ""
                 }`}
-                onClick={() => {
-                  getDetailSurat(item.nomor);
-                  setActive(item.nomor);
-                  setShowSidebar(false);
-                }}
+                onClick={() => setShowSidebar(false)}
               >
                 {item.nomor}. {item.namaLatin}
-              </div>
+              </Link>
             ))}
           </div>
 
           {/* CONTENT */}
           <div className="col-md-9 p-4 content-area">
             {!detailSurat ? (
-              <h3>Pilih surat</h3>
+              <h3>Loading...</h3>
             ) : (
               <>
                 <h2>
@@ -210,7 +231,7 @@ function App() {
                 </button>
 
                 <button
-                  className="btn btn-danger mb-2 ms-2 btn-stop"
+                  className="btn btn-danger mb-2 ms-2"
                   onClick={stopAudio}
                 >
                   Stop
@@ -261,7 +282,7 @@ function App() {
 
                     <div className="mt-2 d-flex gap-2">
                       <button
-                        className={`btn btn-sm btn-modern ${
+                        className={`btn btn-sm ${
                           playingAyat === ayat.nomorAyat
                             ? "btn-warning"
                             : "btn-primary"
@@ -276,7 +297,7 @@ function App() {
                       </button>
 
                       <button
-                        className="btn btn-sm btn-modern btn-secondary"
+                        className="btn btn-sm btn-secondary"
                         onClick={() => toggleTafsir(ayat.nomorAyat)}
                       >
                         📖 Tafsir
@@ -310,4 +331,4 @@ function App() {
   );
 }
 
-export default App;
+export default AppWrapper;

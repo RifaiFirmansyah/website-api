@@ -4,7 +4,9 @@
 }
 
 .sidebar-item {
+  display: block;
   cursor: pointer;
+  text-decoration: none;
   border-radius: 10px;
   padding: 10px;
   margin-bottom: 5px;
@@ -99,6 +101,7 @@ body {
 
 /* TEKS ARAB */
 .arab-text {
+  font-family: uthmanic,serif;
   font-size: 28px;
   line-height: 2;
   text-align: right;
