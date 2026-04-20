@@ -8,6 +8,7 @@ import {
   FaChevronUp,
 } from "react-icons/fa";
 import "./App.css";
+import profileImg from "./assets/nabil.jpg";
 
 /* ================= WRAPPER ROUTER ================= */
 function AppWrapper() {
@@ -16,16 +17,52 @@ function AppWrapper() {
       <Routes>
         <Route path="/" element={<QuranApp />} />
         <Route path="/surat/:nomor" element={<QuranApp />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </HashRouter>
   );
 }
 
+function Profile() {
+  return (
+    <div className="container d-flex justify-content-center align-items-center vh-100">
+      <div className="card shadow-lg p-4 text-center profile-card">
+        {/* FOTO */}
+        <img
+          src={profileImg}
+          alt="profile"
+          className="rounded-circle mb-3 profile-img"
+        />
+
+        {/* NAMA */}
+        <h3 className="fw-bold nama ">Rifai Firmansyah</h3>
+        <p className="text-muted">12450111227</p>
+
+        {/* INFO */}
+        <div className="mt-3 text-start">
+          <p>
+            <b>🎓 Semester:</b> 2
+          </p>
+          <p>
+            <b>💻 Skill:</b> React, Java
+          </p>
+          <p>
+            <b>📍 Status:</b> Student Developer
+          </p>
+        </div>
+
+        {/* BUTTON */}
+        <Link to="/" className="btn btn-primary mt-3 w-100">
+          ⬅ Kembali ke Quran App
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 /* ================= MAIN APP ================= */
 function QuranApp() {
-  console.log("QuranApp jalan");
   const { nomor } = useParams();
-
   const [surat, setSurat] = useState([]);
   const [detailSurat, setDetailSurat] = useState(null);
   const [active, setActive] = useState(null);
@@ -139,8 +176,16 @@ function QuranApp() {
         >
           ☰
         </button>
+        <Link
+          to="/profile"
+          className="btn btn-light position-absolute start-0 ms-3 d-none d-md-block"
+        >
+          👤
+        </Link>
 
-        <span className="navbar-brand mx-auto fw-bold">📖 Quran App</span>
+        <Link to="/" className="navbar-brand mx-auto">
+          My Quran App
+        </Link>
 
         <button
           className="btn btn-light position-absolute end-0 me-3"
